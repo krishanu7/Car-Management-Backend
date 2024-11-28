@@ -3,12 +3,14 @@ const multer = require('multer');
 const { Car } = require('../models/models');
 const router = express.Router();
 
-// Multer configuration for image uploads
+
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => {
+    console.log('Saving to:', 'uploads/');
     cb(null, 'uploads/');
   },
   filename: (_req, file, cb) => {
+    console.log('Saving file with name:', Date.now() + '-' + file.originalname);
     cb(null, Date.now() + '-' + file.originalname);
   }
 });
@@ -25,11 +27,12 @@ const upload = multer({
   }
 });
 
-// Create car
 router.post('/', upload.array('images', 10), async (req, res) => {
   try {
+    // console.log('Uploaded Files:', req.files); 
     const { title, description, tags } = req.body;
     const images = req.files.map(file => `/uploads/${file.filename}`);
+    //console.log('Image paths:', images);
 
     const car = new Car({
       title,
@@ -47,12 +50,11 @@ router.post('/', upload.array('images', 10), async (req, res) => {
   }
 });
 
-// Get all cars for user with search
+
 router.get('/', async (req, res) => {
   try {
     const { search } = req.query;
     let query = { user: req.user._id };
-
     if (search) {
       query.$or = [
         { title: { $regex: search, $options: 'i' } },
@@ -71,13 +73,14 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get single car
 router.get('/:id', async (req, res) => {
   try {
+    console.log("Getting ")
     const car = await Car.findOne({ _id: req.params.id, user: req.user._id });
     if (!car) {
       return res.status(404).json({ message: 'Car not found' });
     }
+    console.log(car);
     res.json(car);
   } catch (error) {
     console.error(error);
@@ -85,7 +88,6 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// Update car
 router.put('/:id', upload.array('images', 10), async (req, res) => {
   try {
     const { title, description, tags } = req.body;

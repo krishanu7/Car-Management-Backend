@@ -1,10 +1,10 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { User } = require('../models/models'); // Ensure the path is correct
+const { User } = require('../models/models'); 
 const router = express.Router();
 
-// Register
+
 router.post('/register', async (req, res) => {
   try {
     const { email, password, name } = req.body;
@@ -20,12 +20,12 @@ router.post('/register', async (req, res) => {
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
     res.status(201).json({ token, user: { id: user._id, email: user.email, name: user.name } });
   } catch (error) {
-    console.error('Error creating user:', error); // Log the error for debugging
+    console.error('Error creating user:', error);
     res.status(500).json({ message: 'Error creating user' });
   }
 });
 
-// Login
+
 router.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -43,7 +43,7 @@ router.post('/login', async (req, res) => {
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
     res.json({ token, user: { id: user._id, email: user.email, name: user.name } });
   } catch (error) {
-    console.error('Error logging in:', error); // Log the error for debugging
+    console.error('Error logging in:', error); 
     res.status(500).json({ message: 'Error logging in' });
   }
 });

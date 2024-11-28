@@ -1,8 +1,6 @@
-// backend/models/models.js
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
-// User Model
 const userSchema = new mongoose.Schema({
   email: {
     type: String,
